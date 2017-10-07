@@ -1,5 +1,10 @@
 var canvas = document.getElementById('canvas');
-canvas.addEventListener('keydown',moveIt,true);
+var body = document.getElementById('body');
+var coords = document.getElementById('coords');
+var domPoints = document.getElementById('points');
+
+
+body.addEventListener('keydown',keyDirection,true);
 
 // canvas.onkeydown = moveIt();
 var context = canvas.getContext("2d");
@@ -19,10 +24,11 @@ var dot = {
 }
 
 var dot2 = {
-    x: 5,
-    y: 5,
+    x: 400,
+    y: 400,
     radius: 10,
 }
+
 
 var circles =[];
 
@@ -30,18 +36,42 @@ circles.push(snake);
 circles.push(dot);
 circles.push(dot2);
 
+var dir = 'd';
+
 var frameCount = 0;
+var points = 0;
+
+function right(){ circles[0].x += 1;}
+function left(){ circles[0].x -= 1;}
+function up(){ circles[0].y -= 1;}
+function down(){ circles[0].y += 1;}
+function direction(){ 
+if (dir == 'd'){down();}
+if (dir == 'u'){up();}
+if (dir == 'l'){left();}
+if (dir == 'r'){right();}
+}
 
 animate();
 
 function animate() {
-    if (frameCount < 300) {
+    var x = circles[0].x;
+    var y = circles[0].y;
+    if (frameCount < 9000) {
         requestAnimationFrame(animate);
     }
-    circles[0].x += 1;
-    circles[1].y += 1;
+
+    if(x > 395 && x < 405  && y > 395 && y < 405){points ++;}
+    // if(x == 500 || x == 0 || y == 500 || 0 == 0){circles[0].x = 0;}
+
+    direction();
+    circles[1].x +=1;
+
     draw();
     frameCount++;
+    coords.innerHTML = 'X = '+ x + ' Y = ' + y;
+    domPoints.innerHTML = points;
+
 }
 
 function draw() {
@@ -55,27 +85,22 @@ function draw() {
         context.stroke();
     }
 }
-
-function moveIt(e){
-    if (e.keycode==35){
-        console.log("key 35 pressed");
-        a
+function keyDirection(e){
+    if (e.key=='a'){//left
+        console.log("left key pressed");
+        dir = "l";
     }
-    function moveIt(e){
-        if (e.keycode==36){
-            console.log("key 36 pressed");
-        }
+    if (e.key=='d'){//right
+        console.log("right key pressed");
+        dir = "r";
     }
-    function moveIt(e){
-        if (e.keycode==37){
-            console.log("key 37 pressed");
-            alert('d');
-        }
+    if (e.key=='w'){//up
+        console.log("up key pressed");
+        dir = "u";
     }
-    function moveIt(e){
-        if (e.keycode==38){
-            console.log("key 38 pressed");
-        }
+    if (e.key=='s'){//down
+        console.log("down key pressed");
+        dir = "d";
     }
 }
 

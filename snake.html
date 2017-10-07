@@ -4,14 +4,37 @@
     <link rel="stylesheet" href="style.css">
 
 </head>
-<body>
+<body id="body">
     <h1>Snake</h1>
     <hr>
+    <div class="clearfix">
+    <div class="col">
+        <h2>Controles</h2>
+        <p>left = a</p>
+        <p>right = d</p>
+        <p>up = w</p>
+        <p>down = s</p>
+    </div>
+    <div class="col">
+        <h2>Controles</h2>
     <button onclick="hello()">say hello</button>
+    </div>
+    <div class="col">
+    <h2>Points</h2>
+    <h3 id="points"></h3>
+</div>
+<div class="col">
+    <h2>Coordenents</h2>
+    <p id="coords">--</p>
+</div>
+</div>
+<div class="row">
     <hr>
     <canvas id="canvas" width="500" height="500"></canvas>
     <hr>
+</div>
     <script src="snakeLogic.js"></script>
+
 </body>
 
 

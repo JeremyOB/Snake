@@ -6,3 +6,20 @@ body{
 #canvas{
 border:1px solid #000000;
 }
+.col{
+    width:25%;
+    float: left;
+    margin: auto;
+}
+.col p{
+    text-align: left;
+}
+.row{
+    width:100%;
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}

@@ -2,6 +2,7 @@ var canvas = document.getElementById('canvas');
 var body = document.getElementById('body');
 var coords = document.getElementById('coords');
 var domPoints = document.getElementById('points');
+canvas.setAttribute('tabindex','0');
 
 
 body.addEventListener('keydown',keyDirection,true);
@@ -37,7 +38,7 @@ circles.push(dot);
 circles.push(dot2);
 
 var dir = 'd';
-
+var gameOver = false;
 var frameCount = 0;
 var points = 0;
 
@@ -52,17 +53,18 @@ if (dir == 'l'){left();}
 if (dir == 'r'){right();}
 }
 
-animate();
+readyPlayerOne();
 
-function animate() {
+function readyPlayerOne() {
     var x = circles[0].x;
     var y = circles[0].y;
-    if (frameCount < 9000) {
-        requestAnimationFrame(animate);
+    if (frameCount < 9000 && gameOver == false) {
+        requestAnimationFrame(readyPlayerOne);
     }
+else{alert("game Over!");}
 
     if(x > 395 && x < 405  && y > 395 && y < 405){points ++;}
-    // if(x == 500 || x == 0 || y == 500 || 0 == 0){circles[0].x = 0;}
+    if(x == 453 || x == 7 || y == 453 || y == 7){gameOver = true;console.log("game over");}
 
     direction();
     circles[1].x +=1;
@@ -102,6 +104,13 @@ function keyDirection(e){
         console.log("down key pressed");
         dir = "d";
     }
+}
+
+function newGame(){
+    circles[0].x=100;
+    circles[0].y=100;
+    gameOver = false;
+    readyPlayerOne();
 }
 
 

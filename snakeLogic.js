@@ -2,77 +2,97 @@ var canvas = document.getElementById('canvas');
 var body = document.getElementById('body');
 var coords = document.getElementById('coords');
 var domPoints = document.getElementById('points');
-canvas.setAttribute('tabindex','0');
-
+canvas.setAttribute('tabindex','1');
 
 body.addEventListener('keydown',keyDirection,true);
 
-// canvas.onkeydown = moveIt();
 var context = canvas.getContext("2d");
 context.fillStyle = "skyblue";
 context.strokeStyle = "gray";
 context.lineWidth = 3;
+
+var dot = {
+    x: 400,
+    y: 400,
+    radius: 10,
+}
 
 var snake = {
     x: 50,
     y: 50,
    radius: 10
 }
-var dot = {
-    x: 100,
-    y: 100,
-    radius: 10,
+
+var snake2 = {
+    x: 40,
+    y: 50,
+   radius: 10
+
 }
 
-var dot2 = {
-    x: 400,
-    y: 400,
-    radius: 10,
+var snake3 = {
+    x: 40,
+    y: 50,
+   radius: 10
+
 }
+
 
 
 var circles =[];
 
-circles.push(snake);
 circles.push(dot);
-circles.push(dot2);
+circles.push(snake);
+circles.push(snake2);
+circles.push(snake3);
+
 
 var dir = 'd';
 var gameOver = false;
 var frameCount = 0;
 var points = 0;
+var th = 20
 
-function right(){ circles[0].x += 1;}
-function left(){ circles[0].x -= 1;}
-function up(){ circles[0].y -= 1;}
-function down(){ circles[0].y += 1;}
-function direction(){ 
-if (dir == 'd'){down();}
-if (dir == 'u'){up();}
-if (dir == 'l'){left();}
-if (dir == 'r'){right();}
+
+function update(){ 
+    var i = 2;
+    var space = 20;
+    while (i < circles.length){
+        circles[i].x = circles[i-1].x;
+        circles[i].y = circles[i-1].y -space;
+        i++
+}
+    switch (dir) {
+        case 'd':circles[1].y += 2;break;
+        case 'u':circles[1].y -= 2;break;
+        case 'l':circles[1].x -= 2;break;
+        case 'r':circles[1].x += 2;break;
+    }
+
+
+
+    // if (dir == 'd'){circles[1].y += 2;}
+    // if (dir == 'u'){circles[1].y -= 2;}
+    // if (dir == 'l'){circles[1].x -= 2;}
+    // if (dir == 'r'){ circles[1].x += 2;}
 }
 
-readyPlayerOne();
+
 
 function readyPlayerOne() {
-    var x = circles[0].x;
-    var y = circles[0].y;
+   
+    hitSide();
+    hitDot();
+    update();
+    draw();
+    frameCount++;
+    coords.innerHTML = 'X = '+ circles[1].x + ' Y = ' + circles[1].y + "<br>" + "X = " + circles[0].x + 'Y = ' + circles[0].y;
+    domPoints.innerHTML = points;
+
     if (frameCount < 9000 && gameOver == false) {
         requestAnimationFrame(readyPlayerOne);
     }
 else{alert("game Over!");}
-
-    if(x > 395 && x < 405  && y > 395 && y < 405){points ++;}
-    if(x == 453 || x == 7 || y == 453 || y == 7){gameOver = true;console.log("game over");}
-
-    direction();
-    circles[1].x +=1;
-
-    draw();
-    frameCount++;
-    coords.innerHTML = 'X = '+ x + ' Y = ' + y;
-    domPoints.innerHTML = points;
 
 }
 
@@ -105,16 +125,34 @@ function keyDirection(e){
         dir = "d";
     }
 }
-
+function moveDot(){
+    circles[0].x = Math.floor((Math.random() * 400) + 1);
+    circles[0].y = Math.floor((Math.random() * 400) + 1);    
+}
 function newGame(){
-    circles[0].x=100;
-    circles[0].y=100;
+    circles[1].x=100;
+    circles[1].y=100;
     gameOver = false;
     readyPlayerOne();
 }
+function hitDot (){
+    if (circles[1].x > circles[0].x - th && 
+        circles[1].x < circles[0].x + th &&
+        circles[1].y > circles[0].y - th && 
+        circles[1].y < circles[0].y + th){
+            points ++;
+            moveDot();
+            }
+}
 
-
-
+function hitSide(){
+   if(circles[1].x > 490 ||
+      circles[1].x < 10 ||
+      circles[1].y > 490 ||
+      circles[1].y < 10){
+            gameOver = true;console.log("game over");}
+            }
+readyPlayerOne();
 
 
 

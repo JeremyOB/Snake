@@ -2,6 +2,7 @@ var canvas = document.getElementById('canvas');
 var body = document.getElementById('body');
 var coords = document.getElementById('coords');
 var domPoints = document.getElementById('points');
+var time = document.getElementById('time');
 canvas.setAttribute('tabindex','1');
 
 body.addEventListener('keydown',keyDirection,true);
@@ -47,6 +48,7 @@ circles.push(snake2);
 circles.push(snake3);
 
 
+
 var dir = 'd';
 var gameOver = false;
 var frameCount = 0;
@@ -80,7 +82,7 @@ function update(){
 
 
 function readyPlayerOne() {
-   
+   var t1 = performance.now();
     hitSide();
     hitDot();
     update();
@@ -93,6 +95,8 @@ function readyPlayerOne() {
         requestAnimationFrame(readyPlayerOne);
     }
 else{alert("game Over!");}
+var t2 = performance.now();
+time.innerHTML =  (t2-t1)/1000;
 
 }
 

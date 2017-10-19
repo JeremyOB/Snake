@@ -3,9 +3,9 @@ var body = document.getElementById('body');
 var coords = document.getElementById('coords');
 var domPoints = document.getElementById('points');
 var time = document.getElementById('time');
-canvas.setAttribute('tabindex','1');
+canvas.setAttribute('tabindex', '1');
 
-body.addEventListener('keydown',keyDirection,true);
+body.addEventListener('keydown', keyDirection, true);
 
 var context = canvas.getContext("2d");
 context.fillStyle = "skyblue";
@@ -21,26 +21,26 @@ var dot = {
 var snake = {
     x: 50,
     y: 50,
-   radius: 10
+    radius: 10
 }
 
 var snake2 = {
     x: 40,
     y: 50,
-   radius: 10
+    radius: 10
 
 }
 
 var snake3 = {
     x: 40,
     y: 50,
-   radius: 10
+    radius: 10
 
 }
 
 
 
-var circles =[];
+var circles = [];
 
 circles.push(dot);
 circles.push(snake);
@@ -53,51 +53,66 @@ var dir = 'd';
 var gameOver = false;
 var frameCount = 0;
 var points = 0;
-var th = 20
+var th = 20;
+var his = [];
 
 
-function update(){ 
+function update() {
+    var snakeX = circles[2].x;
+    var snakeY = circles[2].y;
+    his.push([snakeX,snakeY]);
     var i = 2;
     var space = 20;
-    while (i < circles.length){
-        circles[i].x = circles[i-1].x;
-        circles[i].y = circles[i-1].y -space;
+    var HistLength = his.length;
+    console.log(his[HistLength]);
+    console.log(his);
+
+    while (i < circles.length) {
+        if (HistLength < 20){
+            
+        }
+        else{
+            circles[i].x = his[HistLength];
+            circles[i].y = his[HistLength+20];
+        }
+       
         i++
-}
+    }
     switch (dir) {
-        case 'd':circles[1].y += 2;break;
-        case 'u':circles[1].y -= 2;break;
-        case 'l':circles[1].x -= 2;break;
-        case 'r':circles[1].x += 2;break;
+        case 'd':
+            circles[1].y += 2;
+            break;
+        case 'u':
+            circles[1].y -= 2;
+            break;
+        case 'l':
+            circles[1].x -= 2;
+            break;
+        case 'r':
+            circles[1].x += 2;
+            break;
     }
 
-
-
-    // if (dir == 'd'){circles[1].y += 2;}
-    // if (dir == 'u'){circles[1].y -= 2;}
-    // if (dir == 'l'){circles[1].x -= 2;}
-    // if (dir == 'r'){ circles[1].x += 2;}
 }
 
 
 
 function readyPlayerOne() {
-   var t1 = performance.now();
+    var t1 = performance.now();
     hitSide();
     hitDot();
     update();
     draw();
     frameCount++;
-    coords.innerHTML = 'X = '+ circles[1].x + ' Y = ' + circles[1].y + "<br>" + "X = " + circles[0].x + 'Y = ' + circles[0].y;
+    coords.innerHTML = 'X = ' + circles[1].x + ' Y = ' + circles[1].y + "<br>" + "X = " + circles[0].x + 'Y = ' + circles[0].y;
     domPoints.innerHTML = points;
 
-    if (frameCount < 9000 && gameOver == false) {
+    if (gameOver == false) {
         requestAnimationFrame(readyPlayerOne);
+    } else {
+        alert("game Over!" + startTime);
     }
-else{alert("game Over!");}
-var t2 = performance.now();
-time.innerHTML =  (t2-t1)/1000;
-
+   fps(t1);
 }
 
 function draw() {
@@ -111,52 +126,71 @@ function draw() {
         context.stroke();
     }
 }
-function keyDirection(e){
-    if (e.key=='a'){//left
+
+function keyDirection(e) {
+    if (e.key == 'a') { //left
         console.log("left key pressed");
         dir = "l";
     }
-    if (e.key=='d'){//right
+    if (e.key == 'd') { //right
         console.log("right key pressed");
         dir = "r";
     }
-    if (e.key=='w'){//up
+    if (e.key == 'w') { //up
         console.log("up key pressed");
         dir = "u";
     }
-    if (e.key=='s'){//down
+    if (e.key == 's') { //down
         console.log("down key pressed");
         dir = "d";
     }
 }
-function moveDot(){
+
+function moveDot() {
     circles[0].x = Math.floor((Math.random() * 400) + 1);
-    circles[0].y = Math.floor((Math.random() * 400) + 1);    
+    circles[0].y = Math.floor((Math.random() * 400) + 1);
 }
-function newGame(){
-    circles[1].x=100;
-    circles[1].y=100;
+
+function newGame() {
+    circles[1].x = 100;
+    circles[1].y = 100;
     gameOver = false;
     readyPlayerOne();
 }
-function hitDot (){
-    if (circles[1].x > circles[0].x - th && 
+
+function hitDot() {
+    if (circles[1].x > circles[0].x - th &&
         circles[1].x < circles[0].x + th &&
-        circles[1].y > circles[0].y - th && 
-        circles[1].y < circles[0].y + th){
-            points ++;
-            moveDot();
-            }
+        circles[1].y > circles[0].y - th &&
+        circles[1].y < circles[0].y + th) {
+        points++;
+        moveDot();
+    }
 }
 
-function hitSide(){
-   if(circles[1].x > 490 ||
-      circles[1].x < 10 ||
-      circles[1].y > 490 ||
-      circles[1].y < 10){
-            gameOver = true;console.log("game over");}
-            }
+function hitSide() {
+    if (circles[1].x > 490 ||
+        circles[1].x < 10 ||
+        circles[1].y > 490 ||
+        circles[1].y < 10) {
+        gameOver = true;
+    }
+}
+
+function fps(t1){
+    if (frameCount % 10 === 0){
+        var t2 = performance.now();
+        var frameTime = roundToTwo(t2-t1);
+        var runTime = roundToTwo((t2-startTime)/1000);
+        var fps = roundToTwo(frameCount/runTime);
+time.innerHTML =  "Run time = " + runTime + "<br> Frame time ms = " + frameTime + "<br> fps = " + fps;
+
+    }
+}
+
+
+function roundToTwo(num) {    
+    return +(Math.round(num + "e+2")  + "e-2");
+}
+const startTime = performance.now();
 readyPlayerOne();
-
-
-

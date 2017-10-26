@@ -13,8 +13,8 @@ context.strokeStyle = "gray";
 context.lineWidth = 3;
 
 var dot = {
-    x: 400,
-    y: 400,
+    x: 70,
+    y: 70,
     radius: 10,
 }
 
@@ -32,13 +32,11 @@ var snake2 = {
 }
 
 var snake3 = {
-    x: 40,
-    y: 50,
+    x: 10,
+    y: 10,
     radius: 10
 
 }
-
-
 
 var circles = [];
 
@@ -54,30 +52,25 @@ var gameOver = false;
 var frameCount = 0;
 var points = 0;
 var th = 20;
-var his = [];
-
+var chronicle = [];
 
 function update() {
-    var snakeX = circles[2].x;
-    var snakeY = circles[2].y;
-    his.push([snakeX,snakeY]);
+    var snakeX = circles[1].x;
+    var snakeY = circles[1].y;
+    chronicle.push([snakeX,snakeY]);
     var i = 2;
-    var space = 20;
-    var HistLength = his.length;
-    console.log(his[HistLength]);
-    console.log(his);
+    var space = 10;
+    var histLength = chronicle.length;
 
-    while (i < circles.length) {
-        if (HistLength < 20){
-            
-        }
-        else{
-            circles[i].x = his[HistLength];
-            circles[i].y = his[HistLength+20];
-        }
-       
-        i++
+for (var index = 2; index < circles.length; index++) {
+
+    if (histLength > 30){
+        circles[index].x = chronicle[histLength-space][0];
+        circles[index].y = chronicle[histLength-space][1];
+        space += 10;
     }
+}
+
     switch (dir) {
         case 'd':
             circles[1].y += 2;
@@ -107,7 +100,7 @@ function readyPlayerOne() {
     coords.innerHTML = 'X = ' + circles[1].x + ' Y = ' + circles[1].y + "<br>" + "X = " + circles[0].x + 'Y = ' + circles[0].y;
     domPoints.innerHTML = points;
 
-    if (gameOver == false) {
+    if ( frameCount < 9000 && gameOver == false) {
         requestAnimationFrame(readyPlayerOne);
     } else {
         alert("game Over!" + startTime);
@@ -165,6 +158,8 @@ function hitDot() {
         circles[1].y < circles[0].y + th) {
         points++;
         moveDot();
+        circles.push(snake2);
+        console.log(circles);
     }
 }
 

@@ -24,26 +24,32 @@ var snake = {
     radius: 10
 }
 
-var snake2 = {
-    x: 40,
-    y: 50,
-    radius: 10
+// var snake2 = {
+//     x: 40,
+//     y: 50,
+//     radius: 10
 
-}
+// }
 
-var snake3 = {
-    x: 10,
-    y: 10,
-    radius: 10
+// var snake3 = {
+//     x: 10,
+//     y: 10,
+//     radius: 10
 
-}
+// }
+
+// var snake4 = {
+//     x: 0,
+//     y: 0,
+//     radius: 10
+
+// }
 
 var circles = [];
 
 circles.push(dot);
 circles.push(snake);
-circles.push(snake2);
-circles.push(snake3);
+
 
 
 
@@ -53,6 +59,7 @@ var frameCount = 0;
 var points = 0;
 var th = 20;
 var chronicle = [];
+var snakeLength = 1;
 
 function update() {
     var snakeX = circles[1].x;
@@ -93,7 +100,7 @@ for (var index = 2; index < circles.length; index++) {
 function readyPlayerOne() {
     var t1 = performance.now();
     hitSide();
-    hitDot();
+    eatDot();
     update();
     draw();
     frameCount++;
@@ -151,16 +158,17 @@ function newGame() {
     readyPlayerOne();
 }
 
-function hitDot() {
+function eatDot() {
     if (circles[1].x > circles[0].x - th &&
         circles[1].x < circles[0].x + th &&
         circles[1].y > circles[0].y - th &&
         circles[1].y < circles[0].y + th) {
         points++;
         moveDot();
-        circles.push(snake2);
+        addSnakeSegment();
         console.log(circles);
     }
+
 }
 
 function hitSide() {
@@ -183,9 +191,22 @@ time.innerHTML =  "Run time = " + runTime + "<br> Frame time ms = " + frameTime 
     }
 }
 
+function addSnakeSegment(){
+var snakeBody = {
+ 
+        x: 0,
+        y: 00,
+        radius: 10
+       
+
+}
+circles.push(snakeBody);
+
+}
 
 function roundToTwo(num) {    
     return +(Math.round(num + "e+2")  + "e-2");
 }
 const startTime = performance.now();
 readyPlayerOne();
+

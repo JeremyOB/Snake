@@ -1,17 +1,65 @@
-var canvas = document.getElementById('canvas');
-var body = document.getElementById('body');
-var coords = document.getElementById('coords');
-var domPoints = document.getElementById('points');
-var time = document.getElementById('time');
-canvas.setAttribute('tabindex', '1');
-
-body.addEventListener('keydown', keyDirection, true);
-
+//#region DOM Objects 
+const canvas = document.getElementById('canvas');
+const body = document.getElementById('body');
+const coords = document.getElementById('coords');
+const domPoints = document.getElementById('points');
+const time = document.getElementById('time');
+//endregion
+//region canvas & event handlers
 var context = canvas.getContext("2d");
+canvas.setAttribute('tabindex', '1');
+body.addEventListener('keydown', keyDirection, true);
+document.addEventListener('touchstart', handleTouchStart, false);        
+document.addEventListener('touchmove', handleTouchMove, false);
+//endregion
+//region canvas style
 context.fillStyle = "skyblue";
 context.strokeStyle = "gray";
 context.lineWidth = 3;
+//endregion
+//region touch screen actions 
+var xDown = null;                                                        
+var yDown = null;                                                        
 
+function handleTouchStart(evt) {                                         
+    xDown = evt.touches[0].clientX;                                      
+    yDown = evt.touches[0].clientY;                                      
+};                                                
+
+function handleTouchMove(evt) {
+    if ( ! xDown || ! yDown ) {
+        return;
+    }
+
+    var xUp = evt.touches[0].clientX;                                    
+    var yUp = evt.touches[0].clientY;
+
+    var xDiff = xDown - xUp;
+    var yDiff = yDown - yUp;
+
+    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+        if ( xDiff > 0 ) {
+            /* left swipe */ 
+            dir = "l";
+        } else {
+            /* right swipe */
+            dir = "r";
+        }                       
+    } else {
+        if ( yDiff > 0 ) {
+            /* up swipe */ 
+            dir = "u";
+        } else { 
+            /* down swipe */
+            dir = "d";
+        }                                                                 
+    }
+    /* reset values */
+    xDown = null;
+    yDown = null;                                             
+};
+//endregion
+//region game variables 
 var dot = {
     x: 70,
     y: 70,
@@ -23,60 +71,33 @@ var snake = {
     y: 50,
     radius: 10
 }
-
-// var snake2 = {
-//     x: 40,
-//     y: 50,
-//     radius: 10
-
-// }
-
-// var snake3 = {
-//     x: 10,
-//     y: 10,
-//     radius: 10
-
-// }
-
-// var snake4 = {
-//     x: 0,
-//     y: 0,
-//     radius: 10
-
-// }
-
 var circles = [];
 
-circles.push(dot);
-circles.push(snake);
-
-
-
-
-var dir = 'd';
+var dir = 'd';//starting direction
 var gameOver = false;
 var frameCount = 0;
 var points = 0;
-var th = 20;
-var chronicle = [];
+var th = 20;//snake edge tolorance for colison detection
+var chronicle = [];//log/history of snake cords
 var snakeLength = 1;
+//endregion 
 
 function update() {
     var snakeX = circles[1].x;
     var snakeY = circles[1].y;
-    chronicle.push([snakeX,snakeY]);
+    chronicle.push([snakeX, snakeY]);
     var i = 2;
     var space = 10;
     var histLength = chronicle.length;
 
-for (var index = 2; index < circles.length; index++) {
+    for (var index = 2; index < circles.length; index++) {
 
-    if (histLength > 30){
-        circles[index].x = chronicle[histLength-space][0];
-        circles[index].y = chronicle[histLength-space][1];
-        space += 10;
+        if (histLength > 30) {
+            circles[index].x = chronicle[histLength - space][0];
+            circles[index].y = chronicle[histLength - space][1];
+            space += 10;
+        }
     }
-}
 
     switch (dir) {
         case 'd':
@@ -107,12 +128,12 @@ function readyPlayerOne() {
     coords.innerHTML = 'X = ' + circles[1].x + ' Y = ' + circles[1].y + "<br>" + "X = " + circles[0].x + 'Y = ' + circles[0].y;
     domPoints.innerHTML = points;
 
-    if ( frameCount < 9000 && gameOver == false) {
+    if (gameOver == false) {
         requestAnimationFrame(readyPlayerOne);
     } else {
         alert("game Over!" + startTime);
     }
-   fps(t1);
+    fps(t1);
 }
 
 function draw() {
@@ -180,33 +201,35 @@ function hitSide() {
     }
 }
 
-function fps(t1){
-    if (frameCount % 10 === 0){
+function fps(t1) {
+    if (frameCount % 10 === 0) {
         var t2 = performance.now();
-        var frameTime = roundToTwo(t2-t1);
-        var runTime = roundToTwo((t2-startTime)/1000);
-        var fps = roundToTwo(frameCount/runTime);
-time.innerHTML =  "Run time = " + runTime + "<br> Frame time ms = " + frameTime + "<br> fps = " + fps;
+        var frameTime = roundToTwo(t2 - t1);
+        var runTime = roundToTwo((t2 - startTime) / 1000);
+        var fps = roundToTwo(frameCount / runTime);
+        time.innerHTML = "Run time = " + runTime + "<br> Frame time ms = " + frameTime + "<br> fps = " + fps;
 
     }
 }
 
-function addSnakeSegment(){
-var snakeBody = {
- 
+function addSnakeSegment() {
+    var snakeBody = {
+
         x: 0,
         y: 00,
         radius: 10
-       
+
+
+    }
+    circles.push(snakeBody);
 
 }
-circles.push(snakeBody);
 
+function roundToTwo(num) {
+    return +(Math.round(num + "e+2") + "e-2");
 }
 
-function roundToTwo(num) {    
-    return +(Math.round(num + "e+2")  + "e-2");
-}
+circles.push(dot);
+circles.push(snake);
 const startTime = performance.now();
 readyPlayerOne();
-

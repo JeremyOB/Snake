@@ -9,54 +9,54 @@ const time = document.getElementById('time');
 var context = canvas.getContext("2d");
 canvas.setAttribute('tabindex', '1');
 body.addEventListener('keydown', keyDirection, true);
-document.addEventListener('touchstart', handleTouchStart, false);        
+document.addEventListener('touchstart', handleTouchStart, false);
 document.addEventListener('touchmove', handleTouchMove, false);
 //endregion
 //region canvas style
-context.fillStyle = "skyblue";
+context.fillStyle = 'purple';
 context.strokeStyle = "gray";
 context.lineWidth = 3;
 //endregion
 //region touch screen actions 
-var xDown = null;                                                        
-var yDown = null;                                                        
+var xDown = null;
+var yDown = null;
 
-function handleTouchStart(evt) {                                         
-    xDown = evt.touches[0].clientX;                                      
-    yDown = evt.touches[0].clientY;                                      
-};                                                
+function handleTouchStart(evt) {
+    xDown = evt.touches[0].clientX;
+    yDown = evt.touches[0].clientY;
+};
 
 function handleTouchMove(evt) {
-    if ( ! xDown || ! yDown ) {
+    if (!xDown || !yDown) {
         return;
     }
 
-    var xUp = evt.touches[0].clientX;                                    
+    var xUp = evt.touches[0].clientX;
     var yUp = evt.touches[0].clientY;
 
     var xDiff = xDown - xUp;
     var yDiff = yDown - yUp;
 
-    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
-        if ( xDiff > 0 ) {
-            /* left swipe */ 
+    if (Math.abs(xDiff) > Math.abs(yDiff)) { /*most significant*/
+        if (xDiff > 0) {
+            /* left swipe */
             dir = "l";
         } else {
             /* right swipe */
             dir = "r";
-        }                       
+        }
     } else {
-        if ( yDiff > 0 ) {
-            /* up swipe */ 
+        if (yDiff > 0) {
+            /* up swipe */
             dir = "u";
-        } else { 
+        } else {
             /* down swipe */
             dir = "d";
-        }                                                                 
+        }
     }
     /* reset values */
     xDown = null;
-    yDown = null;                                             
+    yDown = null;
 };
 //endregion
 //region game variables 
@@ -73,21 +73,22 @@ var snake = {
 }
 var circles = [];
 
-var dir = 'd';//starting direction
+var dir = 'd'; //starting direction
 var gameOver = false;
 var frameCount = 0;
 var points = 0;
-var th = 20;//snake edge tolorance for colison detection
-var chronicle = [];//log/history of snake cords
+var th = 20; //snake edge tolorance for colison detection
+const segmentTollerance =8;
+var chronicle = []; //lsog/history of snake cords
 var snakeLength = 1;
+const speed = 3;
 //endregion 
 
 function update() {
     var snakeX = circles[1].x;
     var snakeY = circles[1].y;
     chronicle.push([snakeX, snakeY]);
-    var i = 2;
-    var space = 10;
+    var space = 6;
     var histLength = chronicle.length;
 
     for (var index = 2; index < circles.length; index++) {
@@ -95,30 +96,42 @@ function update() {
         if (histLength > 30) {
             circles[index].x = chronicle[histLength - space][0];
             circles[index].y = chronicle[histLength - space][1];
-            space += 10;
+            space += 6;
+
+            if (circles[1].x > circles[index].x - segmentTollerance &&
+                circles[1].x < circles[index].x + segmentTollerance &&
+                circles[1].y > circles[index].y - segmentTollerance &&
+                circles[1].y < circles[index].y + segmentTollerance
+                
+            ) {
+                console.log("index = " + index + "hit self")
+                gameOver = true
+            }
+
         }
     }
-
     switch (dir) {
         case 'd':
-            circles[1].y += 2;
+        if (dir != 'u') {
+            circles[1].y += speed;
+        }
+            
             break;
         case 'u':
-            circles[1].y -= 2;
+            circles[1].y -= speed;
             break;
         case 'l':
-            circles[1].x -= 2;
+            circles[1].x -= speed;
             break;
         case 'r':
-            circles[1].x += 2;
+            circles[1].x += speed;
             break;
     }
 
 }
 
-
-
 function readyPlayerOne() {
+    console.log(dir);
     var t1 = performance.now();
     hitSide();
     eatDot();
@@ -134,6 +147,8 @@ function readyPlayerOne() {
         alert("game Over!" + startTime);
     }
     fps(t1);
+    
+  
 }
 
 function draw() {
@@ -149,19 +164,19 @@ function draw() {
 }
 
 function keyDirection(e) {
-    if (e.key == 'a') { //left
+    if (e.key == 'a'&& dir !== 'r') { //left
         console.log("left key pressed");
         dir = "l";
     }
-    if (e.key == 'd') { //right
+    if (e.key == 'd'&& dir !== 'l') { //right
         console.log("right key pressed");
         dir = "r";
     }
-    if (e.key == 'w') { //up
+    if (e.key == 'w'&& dir !== 'd') { //up
         console.log("up key pressed");
         dir = "u";
     }
-    if (e.key == 's') { //down
+    if (e.key == 's'&& dir !== 'u') { //down
         console.log("down key pressed");
         dir = "d";
     }
@@ -184,13 +199,10 @@ function eatDot() {
         circles[1].x < circles[0].x + th &&
         circles[1].y > circles[0].y - th &&
         circles[1].y < circles[0].y + th) {
-        points++;
+        points ++;
         moveDot();
         addSnakeSegment();
-        console.log(circles);
-    }
-
-}
+}}
 
 function hitSide() {
     if (circles[1].x > 490 ||
@@ -200,6 +212,8 @@ function hitSide() {
         gameOver = true;
     }
 }
+
+
 
 function fps(t1) {
     if (frameCount % 10 === 0) {
